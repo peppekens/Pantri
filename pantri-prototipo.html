@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pantri</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Caveat:wght@600&display=swap">
+<style>
+:root{--bg:#F4F1EA;--card:#FFFDF8;--yel:#FBE9B0;--btn:#F7D154;--ink:#1A1713;--mut:#6F685B;--line:#E7DFCB;--red:#C2410C;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150F;--card:#24211A;--yel:#4A3F18;--btn:#F7D154;--ink:#F6F1E3;--mut:#A99F88;--line:#38332A;--red:#FB923C}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif}
+body{max-width:520px;margin:0 auto;padding:18px 18px 130px;min-height:100vh}
+h1{font-size:40px;font-weight:800;letter-spacing:-1px;margin:6px 0 16px}
+.hero{background:var(--yel);border-radius:30px;padding:20px}
+.hero h2{font-size:30px;margin:10px 0 6px;font-weight:800;letter-spacing:-.5px}
+.hl{font-family:Caveat,cursive;font-size:36px;background:linear-gradient(transparent 55%,#F7D154 55%);padding:0 4px;color:#1A1713}
+.hero p{margin:0 0 14px;color:var(--mut);line-height:1.4}
+.pill{display:inline-block;background:var(--card);border-radius:99px;padding:6px 12px;font-weight:700;font-size:14px}
+.bar{height:12px;background:rgba(0,0,0,.1);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:#1A1713;border-radius:9px}
+.row2{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-top:8px}
+.card{background:var(--card);border-radius:26px;padding:16px;margin-top:14px}
+.card h3{margin:0 0 10px;font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.tile{background:var(--card);border-radius:24px;padding:16px;border:0;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.tile b{font-size:34px;display:block;letter-spacing:-1px}
+.tile span{color:var(--mut);font-size:14px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);cursor:pointer;width:100%;background:none;border-left:0;border-right:0;border-bottom:0;color:inherit;font:inherit;text-align:left}
+.item:first-of-type{border-top:0}
+.ico{width:50px;height:50px;border-radius:16px;background:var(--yel);display:grid;place-items:center;flex:none}
+.ico svg{width:34px;height:34px}
+.nm{font-weight:700;font-size:17px}
+.sub{color:var(--mut);font-size:14px;margin-top:2px}
+.low{color:var(--red);font-weight:700}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat{display:flex;align-items:center;gap:8px;margin:22px 4px 0;font-weight:800;font-size:15px}
+.btn{border:0;background:var(--btn);color:#1A1713;border-radius:99px;padding:12px 20px;font:inherit;font-weight:800;font-size:16px;cursor:pointer}
+.btn.dark{background:var(--ink);color:var(--bg)}
+.btn.sm{padding:8px 14px;font-size:14px}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:5}
+nav button{border:0;background:none;color:var(--mut);width:58px;height:54px;border-radius:99px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;display:grid;place-items:center;gap:0;padding-top:4px}
+nav button svg{width:24px;height:24px}
+nav button.on{background:var(--btn);color:#1A1713}
+nav .scan{background:var(--ink);color:var(--bg);width:auto;padding:0 18px;grid-auto-flow:column;gap:8px;font-size:14px}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px))}
+.sheet h2{margin:0 0 12px;font-size:26px;font-weight:800}
+label{display:block;font-weight:700;font-size:14px;margin:16px 0 6px}
+input[type=text]{width:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:13px 14px;font:inherit;font-size:17px}
+.step{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:20px;padding:8px 8px 8px 16px;margin-top:8px;font-weight:700}
+.step div{display:flex;align-items:center;gap:14px}
+.step button{width:44px;height:44px;border-radius:50%;border:0;background:var(--btn);color:#1A1713;font-size:24px;font-weight:800;cursor:pointer}
+.step output{font-size:24px;min-width:28px;text-align:center}
+.err{background:#FDE2D4;color:#7C2D12;border-radius:16px;padding:12px 14px;margin:10px 0;font-weight:600;line-height:1.4}
+video{width:100%;border-radius:22px;background:#000;aspect-ratio:3/4;object-fit:cover}
+.empty{color:var(--mut);padding:8px 0;line-height:1.4}
+.acts{display:flex;gap:10px;margin-top:20px}.acts .btn{flex:1}
+button:focus-visible,input:focus-visible{outline:3px solid #1A1713;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var S='fill="none" stroke="#1A1713" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"';
+var Y='fill="#F7D154" stroke="#1A1713" stroke-width="2.5" stroke-linejoin="round"';
+var CATS={
+secchi:{n:'Alimentari secchi',i:'<svg viewBox="0 0 48 48"><rect x="10" y="14" width="28" height="28" rx="6" '+Y+'/><rect x="12" y="7" width="24" height="7" rx="3" '+S+'/><path d="M17 26h14" '+S+'/></svg>'},
+bevande:{n:'Bevande',i:'<svg viewBox="0 0 48 48"><path d="M20 5h8v8l5 7v20a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3V20l5-7z" '+Y+'/><path d="M15 27h18" '+S+'/></svg>'},
+igiene:{n:'Igiene personale',i:'<svg viewBox="0 0 48 48"><path d="M12 8h24l-3 8H15z" '+S+'/><path d="M15 16h18l-2 26H17z" '+Y+'/><path d="M20 26h8" '+S+'/></svg>'},
+pulizia:{n:'Pulizia casa',i:'<svg viewBox="0 0 48 48"><path d="M16 20h16v20a3 3 0 0 1-3 3H19a3 3 0 0 1-3-3z" '+Y+'/><path d="M18 20v-6h10l6-3v7" '+S+'/><path d="M38 8l4-2M38 13h5" '+S+'/></svg>'},
+carta:{n:'Carta e monouso',i:'<svg viewBox="0 0 48 48"><rect x="8" y="12" width="30" height="26" rx="8" '+Y+'/><ellipse cx="38" cy="25" rx="3" ry="13" '+S+'/><circle cx="17" cy="25" r="4" '+S+'/></svg>'},
+varie:{n:'Cucina e varie',i:'<svg viewBox="0 0 48 48"><path d="M24 5a13 13 0 0 0-7 24v5h14v-5A13 13 0 0 0 24 5z" '+Y+'/><path d="M19 40h10M21 44h6" '+S+'/></svg>'}
+};
+var LOC={soffitta:'Soffitta',cucina:'Cucina'};
+var DEF=[
+{name:'Dentifricio',cat:'igiene',s:3,c:1,min:2},
+{name:'Pasta penne',cat:'secchi',s:4,c:2,min:3},
+{name:'Detersivo piatti',cat:'pulizia',s:0,c:1,min:2},
+{name:'Carta igienica',cat:'carta',s:8,c:2,min:6},
+{name:'Acqua frizzante',cat:'bevande',s:6,c:0,min:6},
+{name:'Lampadine E27',cat:'varie',s:0,c:0,min:2},
+{name:'Riso basmati',cat:'secchi',s:1,c:1,min:1}
+].map(function(d,k){return {id:'d'+k,name:d.name,cat:d.cat,q:{soffitta:d.s,cucina:d.c},min:d.min,code:''}});
+var items=DEF,view='oggi',filt='tutto',sheet=null,stream=null,scanOn=false;
+try{var sv=localStorage.getItem('pantri');if(sv)items=JSON.parse(sv)}catch(e){}
+function save(){try{localStorage.setItem('pantri',JSON.stringify(items))}catch(e){}}
+function tot(it){return it.q.soffitta+it.q.cucina}
+function need(){return items.filter(function(i){return tot(i)<i.min})}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function sub(it){var p=[];if(it.q.soffitta)p.push(it.q.soffitta+' in soffitta');if(it.q.cucina)p.push(it.q.cucina+' in cucina');return p.join(' · ')||'Finito'}
+function row(it,act){var low=tot(it)<it.min;return '<button class="item" data-edit="'+it.id+'"><span class="ico">'+CATS[it.cat].i+'</span><span style="flex:1"><div class="nm">'+esc(it.name)+'</div><div class="sub '+(low?'low':'')+'">'+sub(it)+(low?' · ne servono almeno '+it.min:'')+'</div></span>'+(act||'')+'</button>'}
+var NAV={oggi:'<svg viewBox="0 0 24 24" '+S+'><path d="M4 11l8-7 8 7v9H4z"/></svg>',dispensa:'<svg viewBox="0 0 24 24" '+S+'><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 12h16"/></svg>',comprare:'<svg viewBox="0 0 24 24" '+S+'><path d="M3 4h3l2 12h10l2-8H7"/><circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>',scan:'<svg viewBox="0 0 24 24" '+S+'><path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3M4 12h16"/></svg>'};
+function vOggi(){
+var n=need(),ok=items.length-n.length,pct=items.length?Math.round(ok/items.length*100):100;
+var s=items.reduce(function(a,i){return a+i.q.soffitta},0),c=items.reduce(function(a,i){return a+i.q.cucina},0);
+var h='<h1>Oggi</h1><div class="hero"><span class="pill">'+items.length+' prodotti tracciati</span>';
+h+=n.length?'<h2>Mancano <span class="hl">'+n.length+(n.length==1?' cosa':' cose')+'</span>.</h2><p>Sono già nella lista “Da comprare”. Il resto è a posto.</p>':'<h2>Dispensa <span class="hl">a posto</span>.</h2><p>Niente da comprare oggi.</p>';
+h+='<div class="bar"><i style="width:'+pct+'%"></i></div><div class="row2"><span>Scorte ok</span><span>'+ok+' di '+items.length+'</span></div></div>';
+h+='<div class="grid"><button class="tile" data-go="dispensa" data-f="soffitta"><b>'+s+'</b><span>pezzi in soffitta</span></button><button class="tile" data-go="dispensa" data-f="cucina"><b>'+c+'</b><span>pezzi in cucina</span></button></div>';
+if(n.length){h+='<div class="card"><h3>In esaurimento</h3>'+n.slice(0,4).map(function(i){return row(i)}).join('')+'<div class="acts"><button class="btn dark" data-go="comprare">Vai alla lista</button></div></div>'}
+return h}
+function vDisp(){
+var h='<h1>Dispensa</h1><div class="chips">'+['tutto','soffitta','cucina'].map(function(f){return '<button class="chip '+(filt==f?'on':'')+'" data-f="'+f+'">'+(f=='tutto'?'Tutto':LOC[f])+'</button>'}).join('')+'</div>';
+var any=false;
+Object.keys(CATS).forEach(function(k){
+var l=items.filter(function(i){return i.cat==k&&(filt=='tutto'||i.q[filt]>0)});
+if(!l.length)return;any=true;
+h+='<div class="cat"><span style="width:28px;height:28px;display:inline-block">'+CATS[k].i+'</span>'+CATS[k].n+'</div><div class="card" style="margin-top:8px;padding:6px 16px">'+l.map(function(i){return row(i)}).join('')+'</div>'});
+if(!any)h+='<p class="empty">Niente qui. Premi Scansiona per aggiungere il primo prodotto.</p>';
+return h}
+function vBuy(){
+var n=need();
+var h='<h1>Da comprare</h1>';
+if(!n.length)return h+'<div class="card"><p class="empty" style="margin:0">Tutto a posto. I prodotti sotto la scorta minima compaiono qui da soli.</p></div>';
+h+='<div class="card" style="padding:6px 16px">';
+n.forEach(function(i){var m=i.min-tot(i);h+='<div class="item" style="cursor:default"><span class="ico">'+CATS[i.cat].i+'</span><span style="flex:1"><div class="nm">'+esc(i.name)+'</div><div class="sub">Ne servono '+m+' · ora '+tot(i)+'</div></span><button class="btn sm" data-bought="'+i.id+'">Comprato</button></div>'});
+return h+'</div><p class="sub" style="margin:12px 6px">“Comprato” aggiunge i pezzi mancanti in soffitta.</p>'}
+function stepper(l,key,v){return '<div class="step"><span>'+l+'</span><div><button data-st="'+key+'" data-d="-1" aria-label="Meno">−</button><output id="o_'+key+'">'+v+'</output><button data-st="'+key+'" data-d="1" aria-label="Più">+</button></div></div>'}
+function vSheet(){
+if(!sheet)return '';
+var d=sheet;
+if(d.mode=='scan')return '<div class="sheet-bg"><div class="sheet"><h2>Scansiona</h2>'+(d.err?'<div class="err">'+d.err+'</div>':'<video id="vid" playsinline muted></video><p class="sub">Inquadra il codice a barre del prodotto.</p>')+'<div class="acts"><button class="btn" data-x="close">Annulla</button><button class="btn dark" data-x="manual">Scrivi il nome</button></div></div></div>';
+return '<div class="sheet-bg"><div class="sheet"><h2>'+(d.id?'Modifica':'Nuovo prodotto')+'</h2>'+(d.note?'<div class="err">'+d.note+'</div>':'')+'<label for="f_name">Nome</label><input type="text" id="f_name" value="'+esc(d.name)+'" placeholder="Es. Shampoo">'+'<label>Categoria</label><div class="chips">'+Object.keys(CATS).map(function(k){return '<button class="chip '+(d.cat==k?'on':'')+'" data-cat="'+k+'">'+CATS[k].n+'</button>'}).join('')+'</div>'+'<label>Quantità</label>'+stepper('In soffitta','soffitta',d.q.soffitta)+stepper('In cucina','cucina',d.q.cucina)+'<label>Scorta minima</label>'+stepper('Compra se sotto','min',d.min)+'<div class="acts"><button class="btn" data-x="close">Annulla</button><button class="btn dark" data-x="save">Salva</button></div>'+(d.id?'<div class="acts"><button class="btn sm" data-x="del" style="background:none;color:var(--red)">Elimina prodotto</button></div>':'')+'</div></div>'}
+function render(){
+var h=view=='oggi'?vOggi():view=='dispensa'?vDisp():vBuy();
+var b=need().length;
+h+='<nav>'+[['oggi','Oggi'],['dispensa','Dispensa'],['comprare','Lista'+(b?' '+b:'')]].map(function(x){return '<button class="'+(view==x[0]?'on':'')+'" data-go="'+x[0]+'">'+NAV[x[0]]+x[1]+'</button>'}).join('')+'<button class="scan" data-x="scan">'+NAV.scan+'Scansiona</button></nav>'+vSheet();
+document.getElementById('app').innerHTML=h;
+if(sheet&&sheet.mode=='scan'&&!sheet.err)startScan()}
+function stopScan(){scanOn=false;if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}}
+function openNew(code,note){stopScan();sheet={mode:'form',id:null,name:'',cat:'secchi',q:{soffitta:1,cucina:0},min:1,code:code||'',note:note||''};render()}
+function startScan(){
+if(!('BarcodeDetector' in window)||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){sheet.err='Lo scanner non è disponibile su questo dispositivo. Premi “Scrivi il nome” per inserire il prodotto a mano.';render();return}
+var det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){
+stream=s;scanOn=true;var v=document.getElementById('vid');if(!v){stopScan();return}
+v.srcObject=s;v.play();
+(function loop(){if(!scanOn)return;det.detect(v).then(function(r){
+if(r.length){var code=r[0].rawValue;stopScan();var f=items.filter(function(i){return i.code==code})[0];
+if(f){f.q.soffitta++;save();sheet=null;render()}else openNew(code,'Prodotto nuovo. Scrivi il nome e scegli la categoria.')}
+else setTimeout(loop,250)}).catch(function(){setTimeout(loop,400)})})()
+}).catch(function(){sheet.err='Non riesco ad aprire la fotocamera. Consenti l’accesso alla fotocamera oppure premi “Scrivi il nome”.';render()})}
+document.addEventListener('click',function(e){
+var t=e.target.closest('button');if(!t)return;var D=t.dataset;
+if(D.go){view=D.go;if(D.f)filt=D.f;window.scrollTo(0,0);render();return}
+if(D.f&&!D.go){filt=D.f;render();return}
+if(D.edit){var it=items.filter(function(i){return i.id==D.edit})[0];sheet={mode:'form',id:it.id,name:it.name,cat:it.cat,q:{soffitta:it.q.soffitta,cucina:it.q.cucina},min:it.min,code:it.code};render();return}
+if(D.bought){var b=items.filter(function(i){return i.id==D.bought})[0];b.q.soffitta+=Math.max(1,b.min-tot(b));save();render();return}
+if(D.cat){sheet.name=document.getElementById('f_name').value;sheet.cat=D.cat;render();return}
+if(D.st){var k=D.st,d=+D.d;if(k=='min')sheet.min=Math.max(0,sheet.min+d);else sheet.q[k]=Math.max(0,sheet.q[k]+d);
+document.getElementById('o_'+k).textContent=k=='min'?sheet.min:sheet.q[k];return}
+if(D.x=='scan'){sheet={mode:'scan'};render();return}
+if(D.x=='manual'){openNew();return}
+if(D.x=='close'){stopScan();sheet=null;render();return}
+if(D.x=='del'){items=items.filter(function(i){return i.id!=sheet.id});save();sheet=null;render();return}
+if(D.x=='save'){var nm=document.getElementById('f_name').value.trim();
+if(!nm){sheet.name='';sheet.note='Scrivi il nome del prodotto per salvarlo.';render();return}
+sheet.name=nm;
+if(sheet.id){var it2=items.filter(function(i){return i.id==sheet.id})[0];it2.name=nm;it2.cat=sheet.cat;it2.q=sheet.q;it2.min=sheet.min}
+else items.push({id:'n'+Date.now(),name:nm,cat:sheet.cat,q:sheet.q,min:sheet.min,code:sheet.code});
+save();sheet=null;render()}
+});
+render();
+</script>
+</body>
+</html>
