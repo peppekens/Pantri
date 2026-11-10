@@ -27,9 +27,10 @@ function Row({ it, onEdit }: { it: Item; onEdit: (it: Item) => void }) {
   )
 }
 
-export function Oggi({ items, onEdit, goDispensa, goLista }: {
+export function Oggi({ items, onEdit, onAdd, goDispensa, goLista }: {
   items: Item[]
   onEdit: (it: Item) => void
+  onAdd: () => void
   goDispensa: (f: Filter) => void
   goLista: () => void
 }) {
@@ -38,13 +39,24 @@ export function Oggi({ items, onEdit, goDispensa, goLista }: {
   const pct = items.length ? Math.round((ok / items.length) * 100) : 100
   const sum = (k: LocKey) => items.reduce((a, i) => a + i.q[k], 0)
 
+  if (!items.length) {
+    return (
+      <>
+        <h1>Oggi</h1>
+        <div className="hero">
+          <h2>Inizia <span className="hl">da qui</span>.</h2>
+          <p>La dispensa è vuota. Aggiungi il primo prodotto scansionando il codice a barre o scrivendo il nome.</p>
+          <button className="btn dark" onClick={onAdd}>Aggiungi il primo prodotto</button>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <h1>Oggi</h1>
-      <div className="oggi">
-      <div className="oggi-main">
       <div className="hero">
-        <span className="pill">{items.length} prodotti tracciati</span>
+        <span className="pill">{items.length} {items.length === 1 ? 'prodotto tracciato' : 'prodotti tracciati'}</span>
         {need.length ? (
           <>
             <h2>Mancano <span className="hl">{need.length} {need.length === 1 ? 'cosa' : 'cose'}</span>.</h2>
@@ -63,15 +75,13 @@ export function Oggi({ items, onEdit, goDispensa, goLista }: {
         <button className="tile" onClick={() => goDispensa('soffitta')}><b>{sum('soffitta')}</b><span>pezzi in soffitta</span></button>
         <button className="tile" onClick={() => goDispensa('cucina')}><b>{sum('cucina')}</b><span>pezzi in cucina</span></button>
       </div>
-      </div>
       {need.length > 0 && (
-        <div className="card oggi-side">
+        <div className="card">
           <h3>In esaurimento</h3>
           {need.slice(0, 6).map(i => <Row key={i.id} it={i} onEdit={onEdit} />)}
           <div className="acts"><button className="btn dark" onClick={goLista}>Vai alla lista</button></div>
         </div>
       )}
-      </div>
     </>
   )
 }

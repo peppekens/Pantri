@@ -1,5 +1,5 @@
-:root{--bg:#F4F1EA;--card:#FFFDF8;--yel:#FBE9B0;--btn:#F7D154;--ink:#1A1713;--mut:#6F685B;--line:#E7DFCB;--red:#C2410C}
-@media (prefers-color-scheme:dark){:root{--bg:#17150F;--card:#24211A;--yel:#4A3F18;--ink:#F6F1E3;--mut:#A99F88;--line:#38332A;--red:#FB923C}}
+:root{--nav:#FFFDF8;--navink:#6F685B;--line2:#D9CFB5;--sheet:#F4F1EA;--field:#FFFDF8;--bg:#F4F1EA;--card:#FFFDF8;--yel:#FBE9B0;--btn:#F7D154;--ink:#1A1713;--mut:#6F685B;--line:#E7DFCB;--red:#C2410C}
+@media (prefers-color-scheme:dark){:root{--nav:#3A342B;--navink:#D8CFB8;--line2:#524A3C;--sheet:#2E2A22;--field:#1C1914;--bg:#17150F;--card:#24211A;--yel:#4A3F18;--ink:#F6F1E3;--mut:#A99F88;--line:#38332A;--red:#FB923C}}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif}
 body{max-width:520px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(130px + env(safe-area-inset-bottom,0px));min-height:100vh}
@@ -37,7 +37,7 @@ h1{font-size:40px;font-weight:800;letter-spacing:-1px;margin:6px 0 16px}
 .btn.dark{background:var(--ink);color:var(--bg)}
 .btn.sm{padding:8px 14px;font-size:14px}
 .btn.danger{background:none;color:var(--red)}
-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:6px;background:var(--card);border-radius:99px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:5}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:4px;background:var(--card);border-radius:99px;padding:8px;box-shadow:0 8px 30px rgba(0,0,0,.18);z-index:5}
 nav button{border:0;background:none;color:var(--mut);width:58px;height:54px;border-radius:99px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;display:grid;place-items:center;padding-top:4px}
 nav button svg{width:24px;height:24px}
 nav button.on{background:var(--btn);color:#1A1713}
@@ -46,7 +46,7 @@ nav .scan{background:var(--ink);color:var(--bg);width:auto;padding:0 18px;grid-a
 .sheet{background:var(--bg);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:30px 30px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px))}
 .sheet h2{margin:0 0 12px;font-size:26px;font-weight:800}
 label{display:block;font-weight:700;font-size:14px;margin:16px 0 6px}
-input[type=text]{width:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:13px 14px;font:inherit;font-size:17px}
+input[type=text],input[type=email],input[type=password]{width:100%;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:13px 14px;font:inherit;font-size:17px}
 .step{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:20px;padding:8px 8px 8px 16px;margin-top:8px;font-weight:700}
 .step div{display:flex;align-items:center;gap:14px}
 .step button{width:44px;height:44px;border-radius:50%;border:0;background:var(--btn);color:#1A1713;font-size:24px;font-weight:800;cursor:pointer}
@@ -60,20 +60,43 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-of
 
 /* ---------- Schermi larghi (tablet e computer) ---------- */
 @media (min-width:760px){
-  body{max-width:1100px;padding:40px 40px 140px}
+  body{max-width:760px;padding:40px 40px 140px}
   h1{font-size:52px;margin-bottom:22px}
   .hero{padding:28px}
   .hero h2{font-size:38px}
   .hl{font-size:46px}
-  .oggi{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:start}
-  .oggi .card,.oggi .grid{margin-top:14px}
-  .oggi .oggi-side{margin-top:0}
-  .cats{display:grid;grid-template-columns:repeat(2,1fr);gap:0 20px;align-items:start}
   .narrow{max-width:720px;margin:0 auto}
   .sheet-bg{align-items:center}
   .sheet{border-radius:30px;max-width:540px;padding-bottom:24px}
   .tile:hover,.item:not(.static):hover{filter:brightness(.97)}
 }
-@media (min-width:1100px){
-  .cats{grid-template-columns:repeat(3,1fr)}
-}
+
+/* ---------- Correzioni tema scuro e movimento ---------- */
+.ico{background:#FBE9B0}
+.cat-ico{background:#FBE9B0;border-radius:9px;padding:3px;width:30px;height:30px}
+nav{background:var(--nav);border:1px solid var(--line2);box-shadow:0 10px 30px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+nav button{color:var(--navink);position:relative;z-index:1}
+nav button.on{background:none;color:#1A1713}
+nav .scan{color:var(--bg)}
+.pill-bg{position:absolute;left:8px;top:8px;width:58px;height:54px;border-radius:99px;background:var(--btn);transform:translateX(calc(var(--i,0) * 64px));transition:transform .35s cubic-bezier(.3,.8,.3,1)}
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:130px;background:linear-gradient(transparent,var(--bg) 70%);pointer-events:none;z-index:4}
+.page{animation:pageIn .25s ease-out}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sheet-bg{background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn .2s ease-out}
+.sheet{background:var(--sheet);border:1px solid var(--line2);box-shadow:0 -10px 40px rgba(0,0,0,.45);animation:sheetIn .28s cubic-bezier(.3,.8,.3,1)}
+.sheet input[type=text],.sheet .step,.sheet .chip{background:var(--field)}
+.sheet .chip.on{background:var(--ink)}
+.sheet .step button,.sheet .btn:not(.dark){background:var(--btn)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes sheetIn{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.page,.sheet,.sheet-bg{animation:none}.pill-bg{transition:none}}
+
+nav button{width:66px;padding:4px 0 0;white-space:nowrap;font-size:11px}
+nav .scan{width:auto;padding:0 18px}
+.pill-bg{width:66px;transform:translateX(calc(var(--i,0) * 70px))}
+
+/* ---------- Accesso e piccoli elementi ---------- */
+.auth{max-width:420px;margin:0 auto;padding-top:8vh}
+.ok{background:var(--yel);color:var(--ink);border-radius:16px;padding:12px 14px;margin:10px 0;font-weight:600;line-height:1.4}
+.linkbtn{display:block;margin:28px auto 0;background:none;border:0;color:var(--mut);font:inherit;font-weight:700;font-size:14px;text-decoration:underline;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:default}

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { CSSProperties } from 'react'
 import { NAV } from './icons'
 import { ItemForm, ScanSheet } from './Sheets'
 import { Dispensa, Lista, Oggi } from './views'
@@ -15,20 +16,26 @@ type Sheet =
 
 const blank = (code = ''): Draft => ({ name: '', cat: 'secchi', q: { soffitta: 1, cucina: 0 }, min: 1, code })
 
-export default function App() {
-  const [items, setItems] = useItems()
+export default function App({ onSignOut }: { onSignOut: () => void }) {
+  const { items, loading, error, save, remove, addToSoffitta } = useItems()
   const [view, setView] = useState<View>('oggi')
   const [filter, setFilter] = useState<Filter>('tutto')
   const [sheet, setSheet] = useState<Sheet>(null)
 
+  useEffect(() => {
+    document.body.style.overflow = sheet ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [sheet])
+
   const go = (v: View) => { setView(v); window.scrollTo(0, 0) }
   const edit = (it: Item) => setSheet({ mode: 'form', draft: it })
   const toBuy = items.filter(isLow).length
+  const openScan = () => setSheet({ mode: 'scan' })
 
   const onCode = (code: string) => {
     const known = items.find(i => i.code === code)
     if (known) {
-      setItems(items.map(i => i.id === known.id ? { ...i, q: { ...i.q, soffitta: i.q.soffitta + 1 } } : i))
+      void addToSoffitta(known.id, 1)
       setSheet(null)
     } else {
       setSheet({ mode: 'form', draft: blank(code), note: 'Prodotto nuovo. Scrivi il nome e scegli la categoria.' })
@@ -36,30 +43,40 @@ export default function App() {
   }
 
   const onSave = (d: Draft) => {
-    if (d.id) setItems(items.map(i => i.id === d.id ? { ...(d as Item) } : i))
-    else setItems([...items, { ...d, id: 'n' + Date.now() }])
+    void save(d)
     setSheet(null)
   }
 
-  const onBought = (id: string) =>
-    setItems(items.map(i => i.id === id
-      ? { ...i, q: { ...i.q, soffitta: i.q.soffitta + Math.max(1, i.min - total(i)) } }
-      : i))
+  const onBought = (id: string) => {
+    const it = items.find(i => i.id === id)
+    if (it) void addToSoffitta(id, Math.max(1, it.min - total(it)))
+  }
 
   return (
     <>
-      {view === 'oggi' && (
-        <Oggi items={items} onEdit={edit} goLista={() => go('lista')}
-          goDispensa={f => { setFilter(f); go('dispensa') }} />
-      )}
-      {view === 'dispensa' && <Dispensa items={items} filter={filter} setFilter={setFilter} onEdit={edit} />}
-      {view === 'lista' && <Lista items={items} onBought={onBought} />}
+      <main key={view} className="page">
+        {error && <div className="err">{error}</div>}
+        {loading ? (
+          <p className="empty">Carico la dispensa…</p>
+        ) : (
+          <>
+            {view === 'oggi' && (
+              <Oggi items={items} onEdit={edit} onAdd={openScan} goLista={() => go('lista')}
+                goDispensa={f => { setFilter(f); go('dispensa') }} />
+            )}
+            {view === 'dispensa' && <Dispensa items={items} filter={filter} setFilter={setFilter} onEdit={edit} />}
+            {view === 'lista' && <Lista items={items} onBought={onBought} />}
+          </>
+        )}
+        {view === 'oggi' && <button className="linkbtn" onClick={onSignOut}>Esci dall’account</button>}
+      </main>
 
-      <nav>
+      <nav style={{ '--i': ['oggi', 'dispensa', 'lista'].indexOf(view) } as CSSProperties}>
+        <span className="pill-bg" aria-hidden="true" />
         <button className={view === 'oggi' ? 'on' : ''} onClick={() => go('oggi')}>{NAV.oggi}Oggi</button>
         <button className={view === 'dispensa' ? 'on' : ''} onClick={() => go('dispensa')}>{NAV.dispensa}Dispensa</button>
         <button className={view === 'lista' ? 'on' : ''} onClick={() => go('lista')}>{NAV.comprare}Lista{toBuy ? ' ' + toBuy : ''}</button>
-        <button className="scan" onClick={() => setSheet({ mode: 'scan' })}>{NAV.scan}Scansiona</button>
+        <button className="scan" onClick={openScan}>{NAV.scan}Scansiona</button>
       </nav>
 
       {sheet?.mode === 'scan' && (
@@ -69,7 +86,7 @@ export default function App() {
       {sheet?.mode === 'form' && (
         <ItemForm key={sheet.draft.id ?? 'new' + sheet.draft.code} initial={sheet.draft} note={sheet.note}
           onSave={onSave} onClose={() => setSheet(null)}
-          onDelete={sheet.draft.id ? () => { setItems(items.filter(i => i.id !== sheet.draft.id)); setSheet(null) } : undefined} />
+          onDelete={sheet.draft.id ? () => { void remove(sheet.draft.id as string); setSheet(null) } : undefined} />
       )}
     </>
   )

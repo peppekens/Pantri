@@ -1,34 +1,27 @@
 # Pantri
 
 App per sapere cosa hai in dispensa (soffitta e cucina) e cosa serve comprare.
-React + TypeScript + Vite, installabile come app (PWA).
+React + TypeScript + Vite, installabile come app (PWA), dati su Supabase.
 
-## Primo avvio sul Mac
+## Avvio sul Mac
 
-1. Installa Node.js (versione LTS) da https://nodejs.org
-2. Apri il Terminale nella cartella del progetto:
+1. Copia `.env.example` in `.env.local` e inserisci URL e chiave pubblica del progetto Supabase.
+2. Nel Terminale, nella cartella del progetto:
    ```
-   cd ~/Repos/pantri
    npm install
    npm run dev
    ```
 3. Apri l'indirizzo che compare (di solito http://localhost:5173).
 
-## Provarla sul telefono
+## Database
+Lo schema è in `supabase/schema.sql`: va incollato nel SQL Editor di Supabase
+dopo aver messo le due email autorizzate.
 
-`npm run dev` mostra anche un indirizzo "Network" (es. http://192.168.1.20:5173).
-Aprilo dal telefono collegato allo stesso Wi-Fi. Nota: la fotocamera funziona
-solo su indirizzi sicuri (https o localhost), quindi lo scanner si prova dopo
-la pubblicazione online.
-
-## Stato attuale
-- Schermate: Oggi, Dispensa, Da comprare, scheda prodotto, scanner
-- I dati stanno nel browser del dispositivo (non sono ancora condivisi)
-- Scanner: usa la funzione nativa di Chrome; su iPhone mostra l'errore e si inserisce a mano
+## Pubblicazione
+Cloudflare compila e pubblica a ogni push su GitHub. Le due variabili
+`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` vanno inserite anche tra le
+variabili di compilazione di Cloudflare.
 
 ## Prossimi passi
-1. Pubblicazione online (Cloudflare Pages o Vercel)
-2. Supabase: dati condivisi tra i vostri dispositivi
-3. Scanner ZXing per iPhone + nomi da Open Food Facts
-
-Le decisioni di progetto sono in `CLAUDE.md`; `pantri-prototipo.html` è il prototipo originale.
+- Scanner ZXing per iPhone + nomi da Open Food Facts
+- Uso offline in soffitta

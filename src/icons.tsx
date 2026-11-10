@@ -37,7 +37,8 @@ export const CATS: Record<CatKey, { name: string; icon: ReactNode }> = {
 
 export const CAT_KEYS = Object.keys(CATS) as CatKey[]
 
-const nav = (children: ReactNode) => <svg viewBox="0 0 24 24" aria-hidden="true" {...S}>{children}</svg>
+const N = { fill: 'none', stroke: 'currentColor', strokeWidth: 2.5, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
+const nav = (children: ReactNode) => <svg viewBox="0 0 24 24" aria-hidden="true" {...N}>{children}</svg>
 
 export const NAV = {
   oggi: nav(<path d="M4 11l8-7 8 7v9H4z" />),

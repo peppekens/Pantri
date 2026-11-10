@@ -1,38 +1,107 @@
-import { useEffect, useState } from 'react'
-import type { Item } from './types'
+import { useCallback, useEffect, useState } from 'react'
+import { supabase } from './supabase'
+import type { Draft, Item } from './types'
 
-const KEY = 'pantri.items.v1'
-
-const SEED: Item[] = [
-  { id: 'd0', name: 'Dentifricio', cat: 'igiene', q: { soffitta: 3, cucina: 1 }, min: 2, code: '' },
-  { id: 'd1', name: 'Pasta penne', cat: 'secchi', q: { soffitta: 4, cucina: 2 }, min: 3, code: '' },
-  { id: 'd2', name: 'Detersivo piatti', cat: 'pulizia', q: { soffitta: 0, cucina: 1 }, min: 2, code: '' },
-  { id: 'd3', name: 'Carta igienica', cat: 'carta', q: { soffitta: 8, cucina: 2 }, min: 6, code: '' },
-  { id: 'd4', name: 'Acqua frizzante', cat: 'bevande', q: { soffitta: 6, cucina: 0 }, min: 6, code: '' },
-  { id: 'd5', name: 'Lampadine E27', cat: 'varie', q: { soffitta: 0, cucina: 0 }, min: 2, code: '' },
-  { id: 'd6', name: 'Riso basmati', cat: 'secchi', q: { soffitta: 1, cucina: 1 }, min: 1, code: '' }
-]
-
-function load(): Item[] {
-  try {
-    const raw = localStorage.getItem(KEY)
-    if (raw) return JSON.parse(raw) as Item[]
-  } catch {
-    /* ignora: si riparte dai dati di esempio */
-  }
-  return SEED
+interface Row {
+  id: string
+  name: string
+  cat: Item['cat']
+  qty_soffitta: number
+  qty_cucina: number
+  min_qty: number
+  barcode: string | null
 }
 
+const fromRow = (r: Row): Item => ({
+  id: r.id,
+  name: r.name,
+  cat: r.cat,
+  q: { soffitta: r.qty_soffitta, cucina: r.qty_cucina },
+  min: r.min_qty,
+  code: r.barcode ?? ''
+})
+
+const toRow = (d: Draft) => ({
+  name: d.name,
+  cat: d.cat,
+  qty_soffitta: d.q.soffitta,
+  qty_cucina: d.q.cucina,
+  min_qty: d.min,
+  barcode: d.code || null
+})
+
+const byName = (a: Item, b: Item) => a.name.localeCompare(b.name, 'it')
+
 export function useItems() {
-  const [items, setItems] = useState<Item[]>(load)
+  const [items, setItems] = useState<Item[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const load = useCallback(async () => {
+    if (!supabase) return
+    const { data, error: err } = await supabase.from('items').select('*').order('name')
+    if (err) {
+      setError('Non riesco a leggere i dati. Controlla la connessione.')
+    } else {
+      setError('')
+      setItems((data as Row[]).map(fromRow))
+    }
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(items))
-    } catch {
-      /* archiviazione non disponibile */
-    }
-  }, [items])
+    if (!supabase) return
+    void load()
 
-  return [items, setItems] as const
+    // Quando l'altra persona cambia qualcosa, ricarico la lista.
+    const channel = supabase
+      .channel('items-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'items' }, () => { void load() })
+      .subscribe()
+
+    // Se l'app era in background, al ritorno ricarico.
+    const onVisible = () => { if (document.visibilityState === 'visible') void load() }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      void supabase?.removeChannel(channel)
+    }
+  }, [load])
+
+  const fail = (msg: string) => { setError(msg); void load() }
+
+  const save = async (d: Draft) => {
+    if (!supabase) return
+    if (d.id) {
+      const id = d.id
+      setItems(p => p.map(i => (i.id === id ? { ...(d as Item) } : i)).sort(byName))
+      const { error: err } = await supabase.from('items').update(toRow(d)).eq('id', id)
+      if (err) fail('Salvataggio non riuscito. Riprova.')
+    } else {
+      const { data, error: err } = await supabase.from('items').insert(toRow(d)).select().single()
+      if (err || !data) { setError('Salvataggio non riuscito. Riprova.'); return }
+      const created = fromRow(data as Row)
+      setItems(p => (p.some(i => i.id === created.id) ? p : [...p, created].sort(byName)))
+    }
+  }
+
+  const remove = async (id: string) => {
+    if (!supabase) return
+    setItems(p => p.filter(i => i.id !== id))
+    const { error: err } = await supabase.from('items').delete().eq('id', id)
+    if (err) fail('Eliminazione non riuscita. Riprova.')
+  }
+
+  const addToSoffitta = async (id: string, n: number) => {
+    if (!supabase) return
+    const cur = items.find(i => i.id === id)
+    if (!cur) return
+    const next = cur.q.soffitta + n
+    setItems(p => p.map(i => (i.id === id ? { ...i, q: { ...i.q, soffitta: next } } : i)))
+    const { error: err } = await supabase.from('items').update({ qty_soffitta: next }).eq('id', id)
+    if (err) fail('Aggiornamento non riuscito. Riprova.')
+  }
+
+  return { items, loading, error, save, remove, addToSoffitta }
 }
