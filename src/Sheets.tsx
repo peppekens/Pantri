@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { BrowserMultiFormatOneDReader } from '@zxing/browser'
+import type { IScannerControls } from '@zxing/browser'
 import { CATS, CAT_KEYS } from './icons'
 import type { Draft, LocKey } from './types'
 
@@ -69,9 +71,8 @@ export function ItemForm({ initial, note, onSave, onDelete, onClose }: {
   )
 }
 
-/* Scanner: usa la funzione nativa del browser quando c'è (Chrome su Android e Mac).
-   Su iPhone non esiste: mostra l'errore e permette di scrivere il nome a mano.
-   Passo successivo del progetto: sostituirlo con ZXing per farlo funzionare ovunque. */
+/* Scanner: usa la libreria ZXing, che funziona su Chrome, Safari (iPhone) e Mac.
+   Se la fotocamera non si apre, mostra l'errore e permette di scrivere il nome a mano. */
 export function ScanSheet({ onCode, onManual, onClose }: {
   onCode: (code: string) => void
   onManual: () => void
@@ -81,42 +82,37 @@ export function ScanSheet({ onCode, onManual, onClose }: {
   const [err, setErr] = useState('')
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const BD = (window as any).BarcodeDetector
-    if (!BD || !navigator.mediaDevices?.getUserMedia) {
-      setErr('Lo scanner non è disponibile su questo dispositivo. Premi “Scrivi il nome” per inserire il prodotto a mano.')
+    const v = video.current
+    if (!v) return
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setErr('La fotocamera non è disponibile su questo dispositivo. Premi “Scrivi il nome” per inserire il prodotto a mano.')
       return
     }
     let alive = true
-    let stream: MediaStream | null = null
-    const det = new BD({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] })
+    let done = false
+    let controls: IScannerControls | null = null
+    v.muted = true // necessario su iPhone per avviare il video da solo
+    const reader = new BrowserMultiFormatOneDReader()
 
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: 'environment' } })
-      .then(s => {
-        if (!alive) { s.getTracks().forEach(t => t.stop()); return }
-        stream = s
-        const v = video.current
-        if (!v) return
-        v.srcObject = s
-        void v.play()
-        const loop = () => {
-          if (!alive) return
-          det.detect(v)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .then((r: any[]) => {
-              if (r.length) onCode(r[0].rawValue as string)
-              else setTimeout(loop, 250)
-            })
-            .catch(() => setTimeout(loop, 400))
+    reader
+      .decodeFromConstraints({ video: { facingMode: { ideal: 'environment' } } }, v, (result, _error, c) => {
+        if (result && !done) {
+          done = true
+          c.stop()
+          onCode(result.getText())
         }
-        loop()
       })
-      .catch(() => setErr('Non riesco ad aprire la fotocamera. Consenti l’accesso alla fotocamera oppure premi “Scrivi il nome”.'))
+      .then(c => {
+        if (alive) controls = c
+        else c.stop()
+      })
+      .catch(() => {
+        if (alive) setErr('Non riesco ad aprire la fotocamera. Consenti l’accesso alla fotocamera oppure premi “Scrivi il nome”.')
+      })
 
     return () => {
       alive = false
-      stream?.getTracks().forEach(t => t.stop())
+      controls?.stop()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
